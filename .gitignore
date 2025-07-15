@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+async_hack_eth_ui.py
 
 # Distribution / packaging
 .Python
