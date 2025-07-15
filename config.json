@@ -1,0 +1,35 @@
+{
+  "ethereum": {
+    "rpc_url": "https://rpc.ankr.com/eth/fc403bd7dfaf1e6568edaf239f6693a5064b4afa2cf6decc4144d8027cd874e4",
+    "chain_id": 1,
+    "symbol": "ETH",
+    "explorer_api_url": "https://api.etherscan.io/api",
+    "explorer_api_key_env": "ETHERSCAN_API_KEY",
+    "tokens": {
+      "USDT": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      "USDC": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    }
+  },
+  "bsc": {
+    "rpc_url": "https://rpc.ankr.com/bsc/fc403bd7dfaf1e6568edaf239f6693a5064b4afa2cf6decc4144d8027cd874e4",
+    "chain_id": 56,
+    "symbol": "BNB",
+    "explorer_api_url": "https://api.bscscan.com/api",
+    "explorer_api_key_env": "BSCSCAN_API_KEY",
+    "tokens": {
+      "BUSD": "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+      "CAKE": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82"
+    }
+  },
+  "polygon": {
+    "rpc_url": "https://rpc.ankr.com/polygon/fc403bd7dfaf1e6568edaf239f6693a5064b4afa2cf6decc4144d8027cd874e4",
+    "chain_id": 137,
+    "symbol": "MATIC",
+    "explorer_api_url": "https://api.polygonscan.com/api",
+    "explorer_api_key_env": "POLYGONSCAN_API_KEY",
+    "tokens": {
+      "USDC": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      "SAND": "0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683"
+    }
+  }
+}
