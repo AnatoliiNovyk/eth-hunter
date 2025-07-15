@@ -1,0 +1,10 @@
+aiohttp
+aiohttp_socks
+aiosqlite
+cryptography
+eth_account
+loguru
+python-dotenv
+python-telegram-bot
+stem
+web3
