@@ -1,8 +1,8 @@
 # src/core.py
-
 import asyncio
 import random
 import os
+import hashlib
 from eth_account import Account
 from web3 import Web3
 from cryptography.fernet import Fernet
@@ -12,16 +12,6 @@ from .notifier import notifier
 from .utils import ERC20_ABI
 from .analysis import WalletAnalyzer
 
-def generate_wallets_sync(count: int, chain_name: str):
-    wallets = []
-    for _ in range(count):
-        pk = ''.join(random.choice('0123456789abcdef') for _ in range(64))
-        try:
-            acct = Account.from_key(pk)
-            wallets.append(Wallet(address=acct.address, private_key=pk, chain=chain_name))
-        except Exception:
-            continue
-    return wallets
 
 class CoreLogic:
     def __init__(self, state: AppState, session, chain_config: dict, cipher: Fernet):
@@ -46,8 +36,9 @@ class CoreLogic:
                     self.state.errors += 1; return
                 results = await response.json()
                 if not isinstance(results, list): return
-                self.state.chain_stats[self.chain_config['name']]['total_checks'] += len(wallets)
-                self.state.total_checks += len(wallets)
+                total_in_batch = len(wallets)
+                self.state.chain_stats[self.chain_config['name']]['total_checks'] += total_in_batch
+                self.state.total_checks += total_in_batch
         except Exception as e:
             self.state.errors += 1; print(f"Помилка RPC [{self.chain_config['name']}]: {e}"); return
 
@@ -81,18 +72,27 @@ class CoreLogic:
             except Exception:
                 continue
 
-async def worker(state: AppState, session, chain_config: dict, cipher: Fernet, process_executor):
+async def worker(state: AppState, session, chain_config: dict, cipher: Fernet):
+    """Фінальна, стабільна версія воркера."""
     logic = CoreLogic(state, session, chain_config, cipher)
-    loop = asyncio.get_running_loop()
     chain_name = chain_config['name']
-
+    batch_size = 50
+    
     while True:
-        # Перевірка паузи перед кожною ітерацією
         await state.pause_event.wait()
+        
+        wallets_to_check = []
+        for _ in range(batch_size):
+            pk = ''.join(random.choice('0123456789abcdef') for _ in range(64))
+            try:
+                acct = Account.from_key(pk)
+                wallets_to_check.append(Wallet(address=acct.address, private_key=pk, chain=chain_name))
+            except Exception:
+                continue
+            # Після кожної генерації ключа ми "відпускаємо" процесор, щоб веб-сервер міг працювати
+            await asyncio.sleep(0)
 
-        wallets_to_check = await loop.run_in_executor(
-            process_executor, generate_wallets_sync, 50, chain_name
-        )
         if wallets_to_check:
             await logic.check_wallets_batch(wallets_to_check)
+        
         await asyncio.sleep(state.adaptive_delay)
